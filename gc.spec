@@ -2,7 +2,7 @@ Summary: A garbage collector for C and C++
 Name:    gc
 Version: 7.1
 
-Release: 10%{?dist}
+Release: 12%{?dist}
 Group:   System Environment/Libraries
 License: BSD
 Url:     http://www.hpl.hp.com/personal/Hans_Boehm/gc/
@@ -19,6 +19,10 @@ Patch50: gc-7.1-dup_cpp_headers.patch
 ## upstream patches
 # http://www.hpl.hp.com/hosted/linux/mail-archives/gc/2008-May/002206.html
 Patch100: gc-7.1-dont_add_byte.patch
+Patch101: gc-7.1-Fix-calloc-overflow.patch
+Patch102: gc-7.1-Fix-calloc-related-code-to-prevent-SIZE_MAX-redefini.patch
+Patch103: gc-7.1-Speedup-calloc-size-overflow-check-by-preventing-div.patch
+Patch104: gc-7.1-Fix-allocation-size-overflows-due-to-rounding.patch
 
 BuildRequires: automake libtool
 BuildRequires: libatomic_ops-devel
@@ -56,6 +60,11 @@ Provides:  libgc-devel = %{version}-%{release}
 
 %patch100 -p1 -b .dont_add_byte
 
+%patch101 -p1 -b .fix_calloc_malloc
+%patch102 -p1 -b .fix_calloc_malloc
+%patch103 -p1 -b .fix_calloc_malloc
+%patch104 -p1 -b .fix_calloc_malloc
+
 # refresh auto*/libtool to purge rpaths
 rm -f libtool libtool.m4
 libtoolize --force
@@ -75,6 +84,8 @@ export CXXFLAGS="$RPM_OPT_FLAGS"
   --enable-large-config \
 %ifarch %{ix86}
   --enable-parallel-mark \
+  --build=i386-redhat-linux-gnu \
+  --host=i386-redhat-linux-gnu \
 %endif
   --enable-threads=posix
 
@@ -124,6 +135,14 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Oct 30 2013 Stanislav Ochotnicky <sochotnicky@redhat.com> - 7.1-12
+- Fix host triplets on x86 (#1014273)
+- Related: CVE-2012-2673
+
+* Tue Jun 05 2012 Stanislav Ochotnicky <sochotnicky@redhat.com> - 7.1-11
+- Add sanity checking for calloc/malloc calls
+- Resolves: CVE-2012-2673
+
 * Fri Jun 18 2010 Stanislav Ochotnicky <sochotnicky@redhat.com> - 7.1-10
 - Add -fno-strict-aliasing to CFLAGS/CXXFLAGS (bz 605048)
 
