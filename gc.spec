@@ -2,7 +2,7 @@ Summary: A garbage collector for C and C++
 Name:    gc
 %global base_ver 7.2
 Version: 7.2d
-Release: 6%{?dist}
+Release: 7%{?dist}
 
 Group:   System Environment/Libraries
 License: BSD
@@ -98,8 +98,8 @@ rm -fv  %{buildroot}%{_libdir}/lib*.la
 %check
 make check
 # ignore results on powerpc - the atomic stack feature is not working correctly
-# there (#883748)
-%ifarch ppc ppc64
+# there (#883748, #1125508)
+%ifarch ppc ppc64 ppc64le
 %global arch_ignore ||:
 %endif
 make check -C libatomic_ops %{?arch_ignore}
@@ -148,6 +148,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Aug 14 2014 Pavel Raiskup <praiskup@redhat.com> - 7.2d-7
+- enable ppc64le build (#1125508)
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 7.2d-6
 - Mass rebuild 2014-01-24
 
